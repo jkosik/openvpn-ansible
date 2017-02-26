@@ -31,7 +31,7 @@
 
     - name: Restart openvpn
       service:
-        name: openvpn
+        name: openvpn@server
         state: restarted
 
     - name: REVOCATION COMPLETED FOR {{ revoke_client }}
