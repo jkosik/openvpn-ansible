@@ -1,0 +1,40 @@
+---
+
+interface_external: ens3
+interface_internal: ens4
+vpn_listening_on: "{{ ansible_ens3.ipv4.address }}"
+vpn_port: "1194"
+
+install_dir: "/home/ubuntu/openvpn-ca"
+
+key_country: "SK"
+key_province: "BA"
+key_city: "Bratislava"
+key_org: "juraj_org"
+key_email: "juraj@abc.com"
+key_ou: "juraj_ou"
+key_name: "JURAJ-KEY"
+
+#server key name used in build.sh and passed later to server.conf
+server_key: "juraj"
+
+#initial client name used in build.sh
+init_client: "juraj"
+
+#server.conf
+vpn_net: "10.8.0.0 255.255.255.0"
+vpn_push_route:
+  - 'push "route 100.127.172.0 255.255.255.0"'
+
+#iptables routing
+ipt_vpn_net: "10.8.0.0/24"
+ipt_int_net: "100.127.172.0/24"
+
+#ACCOUNT LIFECYCLE
+#User to create (pushed to create_user.yml only)
+client: "juraj2"
+
+# User to revoke (pushed to revoke_user.yml only)
+revoke_client: "juraj2"
+
+

@@ -1,0 +1,51 @@
+---
+
+- hosts: all
+  become: yes
+  gather_facts: no
+  roles:
+    - { role: ansible-set-proxy, http_proxy_address: "http://myproxy.eu:3128", https_proxy_address: "http://myproxy.eu:3128", tags: ["set-proxy"] }
+    - { role: ansible-py2-bootstrap, tags: [ "py2-bootstrap"] }
+
+- hosts: all
+  become: yes
+  gather_facts: true
+  tasks:
+    - name: Copy ca.key and ca.crt from /etc/openvpn to keys folder. Needed for creating new users.
+      command: cp /etc/openvpn/{{ item }} {{ install_dir }}/keys/
+      with_items:
+        - ca.key
+        - ca.crt
+
+    - name: Copy script for user creation.
+      template: src=create_user.sh.j2 dest={{ install_dir }}/create_user.sh owner=root group=root mode=744 backup=yes
+
+    - name: Running create_user.sh on the target. ===== CREATING USER {{ client }} =====
+      command: "{{ install_dir }}/create_user.sh"
+
+    - name: Fetch keys and certs to localhost for client connection
+      fetch:
+        src: "{{ install_dir }}/keys/{{ item }}"
+        dest: fetched/
+        fail_on_missing: yes
+        flat: yes
+      with_items:
+        - ca.crt
+        - "{{ client }}.key"
+        - "{{ client }}.crt"
+
+    - name: Copy client config to server first for later fetching. Local copying buggy.
+      template:
+        src: client.ovpn.j2
+        dest: "{{ install_dir }}/client_{{ client }}.ovpn"
+
+    - name: Fetch client config to localhost for client connection
+      fetch:
+        src: "{{ install_dir }}/client_{{ client }}.ovpn"
+        dest: fetched/
+        fail_on_missing: yes
+        flat: yes
+
+    - name: USER CREATION COMPLETED FOR {{ client }}
+      debug: msg="{{ client }} CREATED..."
+

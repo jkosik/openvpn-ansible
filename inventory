@@ -1,0 +1,8 @@
+[all:vars]
+ansible_connection=ssh 
+ansible_ssh_private_key=path-to-key
+ansible_user=ubuntu
+
+[all]
+10.235.3.0 inv_hostname="openvpn-test"
+

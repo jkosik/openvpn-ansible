@@ -1,0 +1,38 @@
+---
+
+- hosts: all
+  become: yes
+  gather_facts: no
+  roles:
+    - { role: ansible-set-proxy, http_proxy_address: "http://myproxy.eu:3128", https_proxy_address: "http://myproxy.eu:3128", tags: ["set-proxy"] }
+    - { role: ansible-py2-bootstrap, tags: [ "py2-bootstrap"] }
+
+- hosts: all
+  become: yes
+  gather_facts: true
+  tasks:
+    - name: Update server.conf - crl verification
+      blockinfile:
+        dest: /etc/openvpn/server.conf
+        backup: yes
+        block: |
+          crl-verify /etc/openvpn/crl.pem
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+
+    - name: Uploading script for user revocation.
+      template: src=revoke_user.sh.j2 dest={{ install_dir }}/revoke_user.sh owner=root group=root mode=744 backup=yes
+
+    - name: Running revoke_user.sh on the target. ===== REVOKING USER {{ revoke_client }}  =====. Ignore errors - Error 23 indicates need to copy fresh crl.pem to /etc/openvpn/
+      command: "{{ install_dir }}/revoke_user.sh"
+      ignore_errors: yes
+
+    - name: crl.pem is created on first revoke and updated on every other. Must be copied to /etc/openvpn after every revoke.
+      command: "cp {{ install_dir }}/keys/crl.pem /etc/openvpn/crl.pem"
+
+    - name: Restart openvpn
+      service:
+        name: openvpn
+        state: restarted
+
+    - name: REVOCATION COMPLETED FOR {{ revoke_client }}
+      debug: msg="{{ revoke_client }} REVOKED..."

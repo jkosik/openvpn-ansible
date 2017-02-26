@@ -1,0 +1,29 @@
+#!/bin/sh
+
+#Ansible was not able to 'command: source vars' directly or via this bash script. Manual workaround needed. Below is the list of all variables from original vars file provided by openvpn and easy-rsa
+export EASY_RSA="{{ install_dir }}"
+export OPENSSL="openssl"
+export PKCS11TOOL="pkcs11-tool"
+export GREP="grep"
+export KEY_CONFIG=`$EASY_RSA/whichopensslcnf $EASY_RSA`
+export KEY_DIR="$EASY_RSA/keys"
+export PKCS11_MODULE_PATH="dummy"
+export PKCS11_PIN="dummy"
+export KEY_SIZE=2048
+export CA_EXPIRE=3650
+export KEY_EXPIRE=3650
+export KEY_COUNTRY="{{ key_country }}"
+export KEY_PROVINCE="{{ key_province }}"
+export KEY_CITY="{{ key_city }}"
+export KEY_ORG="{{ key_org }}"
+export KEY_EMAIL="{{ key_email }}"
+export KEY_OU="{{ key_ou }}"
+export KEY_NAME="{{ key_name }}"
+# export PKCS11_MODULE_PATH="/usr/lib/changeme.so"
+# export PKCS11_PIN=1234
+# If you'd like to sign all keys with the same Common Name, uncomment the KEY_CN export below
+# export KEY_CN="CommonName"
+
+# Create client certs. Solving interaction also for ./build-key
+#{{ install_dir }}/build-key {{ client }}
+{{ install_dir }}/pkitool {{ client }} 
