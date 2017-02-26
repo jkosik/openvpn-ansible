@@ -30,9 +30,9 @@ $ ansible-playbook -i inventory main.yml
 10.235.3.0 inv_hostname="openvpn-test"
 ```
 ### Required roles
-* ansible-py2-bootstrap
-* ansible-fqdn
-* ansible-set-proxy
+* ansible-py2-bootstrap - installs python2.7 (mandatory)
+* ansible-fqdn - updates hostname (if needed)
+* ansible-set-proxy - set proxy (if needed)
 * ansible-openvpn
 
 ### Client connection
