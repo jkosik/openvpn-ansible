@@ -4,13 +4,19 @@
   become: yes
   gather_facts: no
   roles:
-    - { role: ansible-set-proxy, http_proxy_address: "http://myproxy.eu:3128", https_proxy_address: "http://myproxy.eu:3128", tags: ["set-proxy"] }
+    - { role: ansible-set-proxy, http_proxy_address: "http://proxy.hu.in.pan-net.eu:3128", https_proxy_address: "http://proxy.hu.in.pan-net.eu:3128", tags: ["set-proxy"] }
     - { role: ansible-py2-bootstrap, tags: [ "py2-bootstrap"] }
 
 - hosts: all
   become: yes
   gather_facts: true
   tasks:
+    - name: Copy ca.key and ca.crt from /etc/openvpn to keys folder. Needed for creating/revoking new users.
+      command: cp /etc/openvpn/{{ item }} {{ install_dir }}/keys/
+      with_items:
+        - ca.key
+        - ca.crt
+
     - name: Update server.conf - crl verification
       blockinfile:
         dest: /etc/openvpn/server.conf

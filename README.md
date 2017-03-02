@@ -1,9 +1,12 @@
+**Owned by juraj**
+
 # Deployment of OpenVPN server
 
 **Assumptions**
-* VM is created in Openstacki (etsted in Openstack with Ubuntu 16 images).
-* VM is dualhomed. *It is recommended to attach external interface to the VM first to set default GW properly.*
-* External interface will act as VPN listener and will forward traffic to network where internatl interface is conencted to.
+* VM is created in Openstack.
+* VM is dualhomed. *It is recommended to attach external interface to the VM first to have default set GW properly.*
+* External interface will act as VPN listener and will forward traffic to network where internal interface is conencted to.
+* Default behaviour: VPN listens on ens3 (10.235.x.x), internal network is connected to ens4 (100.127.x.x)
 * Routed mode used as default
 
 # Playbook
@@ -30,9 +33,9 @@ $ ansible-playbook -i inventory main.yml
 10.235.3.0 inv_hostname="openvpn-test"
 ```
 ### Required roles
-* ansible-py2-bootstrap - installs python2.7 (mandatory)
-* ansible-fqdn - updates hostname (if needed)
-* ansible-set-proxy - set proxy (if needed)
+* ansible-py2-bootstrap
+* ansible-fqdn
+* ansible-set-proxy
 * ansible-openvpn
 
 ### Client connection
@@ -54,10 +57,10 @@ In case additional users are needed, change variable ```client``` in ```group_va
 Duplicate user names are allowed only once the first account with the same name was revoked. New account will be differentiated based on new ID. See example for *juraj2* account:
 ```
 root@openvpn-test:/home/ubuntu/openvpn-ca# cat keys/index.txt
-V	270223222639Z		01	unknown	/C=SK/ST=BA/L=Bratislava/O=juraj_org/OU=juraj_ou/CN=juraj/name=JURAJ-KEY/emailAddress=juraj@abc.com
-V	270223222658Z		02	unknown	/C=SK/ST=BA/L=Bratislava/O=juraj_org/OU=juraj_ou/CN=juraj/name=JURAJ-KEY/emailAddress=juraj@abc.com
-R	270223222924Z	170225223011Z	03	unknown	/C=SK/ST=BA/L=Bratislava/O=juraj_org/OU=juraj_ou/CN=juraj2/name=JURAJ-KEY/emailAddress=juraj@abc.com
-V	270223223723Z		05	unknown	/C=SK/ST=BA/L=Bratislava/O=juraj_org/OU=juraj_ou/CN=juraj2/name=JURAJ-KEY/emailAddress=juraj@abc.com
+V	270223222639Z		01	unknown	/C=SK/ST=BA/L=Bratislava/O=DT Pan-Net/OU=Sec Team/CN=pannet/name=JURAJ-KEY/emailAddress=juraj@telekom.com
+V	270223222658Z		02	unknown	/C=SK/ST=BA/L=Bratislava/O=DT Pan-Net/OU=Sec Team/CN=juraj/name=JURAJ-KEY/emailAddress=juraj@telekom.com
+R	270223222924Z	170225223011Z	03	unknown	/C=SK/ST=BA/L=Bratislava/O=DT Pan-Net/OU=Sec Team/CN=juraj2/name=JURAJ-KEY/emailAddress=juraj@telekom.com
+V	270223223723Z		05	unknown	/C=SK/ST=BA/L=Bratislava/O=DT Pan-Net/OU=Sec Team/CN=juraj2/name=JURAJ-KEY/emailAddress=juraj@telekom.com
 ```
 
 ### revoke_user.yml

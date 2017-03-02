@@ -1,6 +1,6 @@
 [all:vars]
 ansible_connection=ssh 
-ansible_ssh_private_key=path-to-key
+ansible_ssh_private_key=/data/pannet/access/support_cloud/vm-keys/sc-vm-juraj
 ansible_user=ubuntu
 
 [all]

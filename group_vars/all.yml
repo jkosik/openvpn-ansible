@@ -10,13 +10,13 @@ install_dir: "/home/ubuntu/openvpn-ca"
 key_country: "SK"
 key_province: "BA"
 key_city: "Bratislava"
-key_org: "juraj_org"
-key_email: "juraj@abc.com"
-key_ou: "juraj_ou"
+key_org: "DT Pan-Net"
+key_email: "juraj@telekom.com"
+key_ou: "Sec Team"
 key_name: "JURAJ-KEY"
 
 #server key name used in build.sh and passed later to server.conf
-server_key: "juraj"
+server_key: "pannet"
 
 #initial client name used in build.sh
 init_client: "juraj"
